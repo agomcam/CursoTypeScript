@@ -18,7 +18,7 @@ console.log("Hola Antonio");
 
 var nombre: String = "Antonio"; // Variable global
 let apellido: String = "Antonio"; // Variable local
-const EDAD: Number = 20; // Constante
+const EDAD: number = 20; // Constante
 
 //Formas de concatenar textos
 
@@ -29,7 +29,7 @@ console.log(`Hola ${nombre} tu edad es: ${EDAD}`); // de esta forma injectamos v
 // Arrays  de datos
 
 let alumnos: String[] = ["Juan", "Jose", "Alex"];
-let valores: (String | Number)[] = ["Hola", 2];
+let valores: (String | number)[] = ["Hola", 2];
 let batiburrillo = [...alumnos, ...valores];
 
 console.log(batiburrillo);
@@ -57,7 +57,7 @@ let estadoTarea: EstadoTarea = EstadoTarea.EnProceso;
 
 interface Tarea {
     nombre: String,
-    prioridad: Number,
+    prioridad: number,
     estado: EstadoTarea
 }
 
@@ -69,8 +69,8 @@ console.log(tarea1);
 
 type Empleado = {
     nombre: String,
-    edad: Number,
-    sueldo: Number
+    edad: number,
+    sueldo: number
 };
 
 let empleado1: Empleado = { nombre: "Antonio", edad: 18, sueldo: 1500 };
@@ -124,9 +124,235 @@ switch (tarea1.estado) {
 // try catch
 
 try {
-    let numero1: Number = 1;
+    let numero1: number = 1;
     console.log(numero1.toString())
 } catch (error) {
     console.log("Se ha producido un error al convertir el numero en String ", error);
 
 }
+
+// Bucles
+
+let listaTareas: Tarea[] = [{
+    nombre: "Algo",
+    estado: EstadoTarea.Pendiente,
+    prioridad: 4
+},
+{
+    nombre: "Antonio",
+    estado: EstadoTarea.EnProceso,
+    prioridad: 0
+},
+{
+    nombre: "Algo",
+    estado: EstadoTarea.Pendiente,
+    prioridad: 15
+}];
+
+
+
+// Mostramos todas las tareas
+
+// foreach
+listaTareas.forEach((tarea: Tarea, i: number) => {
+    console.log(`La tarea ${i} es ${tarea.nombre}`);
+});
+
+// for clasico
+
+for (let index = 0; index < listaTareas.length; index++) {
+    console.log(`La tarea ${listaTareas[index].nombre} tiene una prioridad de: ${listaTareas[index].prioridad}`);
+
+}
+
+// Bucles while
+
+while (tarea1.estado != EstadoTarea.Terminado) {
+    if (tarea1.prioridad == 20) {
+        tarea1.estado = EstadoTarea.Terminado;
+        break;
+    } else {
+        tarea1.prioridad++;
+    }
+}
+
+// Bucle do While
+
+do {
+    tarea1.prioridad++;
+    tarea1.estado == EstadoTarea.Terminado;
+} while (tarea1.estado != EstadoTarea.Terminado);
+
+// Funciones
+
+/**
+ * Funcion que salua a una persona con el nombre que le indiques
+ * @param nombre - nombre que queremos saludar
+ */
+function saludar(nombre: String) {
+    console.log(`Hola ${nombre}`);
+
+}
+
+saludar("Antonio");
+
+// Funcion con parametros opcionales
+
+/**
+ * Funcion que sirve para decirle adios a una persona, en caso de no decir nungun nombre diremos adios 
+ * @param nombre - nombre a despedirse de la persona
+ */
+function despedir(nombre?: String) {
+    if (nombre) {
+        console.log(`Adios ${nombre}`);
+    } else {
+        console.log(`Adios`);
+    }
+
+}
+
+despedir("Antonio");
+
+// funcion pasandole varios tipos
+function algo(n: String | number) {
+
+    if (typeof (n) == "string") {
+        console.log("Soy un String");
+    } else {
+        console.log("Soy un numero");
+
+    }
+}
+
+algo("A");
+algo(1);
+
+// Funcion que devulve un parametro
+function suma(number1: number, number2: number): number {
+    return number1 + number2;
+}
+
+console.log(suma(1, 19));
+
+// funcion con propagacion
+/**
+ * Esta funcion le puedes introducir tantos esstring como quieras
+ * @param nombre - lita de string
+ */
+function multiplesValores(...nombre: String[]) {
+    nombre.forEach(n => {
+        console.log(`nombre: ${n}`)
+    });
+
+}
+
+multiplesValores("Antonio", "Andres", "Cristoval", "Enrrique", "Veronica", "Carla", "Enrriquita");
+// Que es muy distinto que la siguiente funcion que en este caso si recibe una lista
+/**
+ * Funcion que muestra los valores de una lista
+ * @param lista - lista de valores a mostrar
+ */
+function mostrarLista(lista: String[]) {
+    lista.forEach(element => {
+        console.log(element);
+    });
+
+}
+
+let lista: String[] = ["Antonio", "Pedro", "Maria de las Carmen"];
+
+// Se puede pasar la lista de esta forma
+mostrarLista(lista);
+
+
+// Funciones flechas (Son funciones que se llaman y se almacenan en una variable)
+// Declaramos los datos para usarlo a continuacion
+type Almacen = {
+    nombre: string,
+    capacidad: number
+};
+
+let almacen: Almacen = { nombre: "tecnologia", capacidad: 20 };
+
+let datosAlmacen = (almancen: Almacen) => `El almacen de ${almacen.nombre} tiene una capacidad de ${almacen.capacidad}`;
+
+console.log(datosAlmacen(almacen));
+
+let obtenerSalario = (empleado: Empleado, cobrar: () => string) => {
+    if (empleado.edad > 70) {
+        return;
+    } else {
+        cobrar(); // Callbalck a Ejecutar
+    }
+};
+
+let cobrarEmpleado = (empleado: Empleado) => {
+    console.log(`${empleado.nombre} cobra su salario`);
+
+};
+
+obtenerSalario(empleado1, () => "Cobra Antonio");
+
+
+// Funciones asincronas
+
+async function ejemploAsync(): Promise<string> {
+    await console.log("Tarea a completar antes de seguir con la secuencia de instrucciones");
+    console.log("Completado");
+
+    return "Completado"
+
+}
+
+ejemploAsync().then((respuesta) =>{
+    console.log("Respueta", respuesta);
+    
+}).catch((error) =>{
+    console.log("Ha avido un error", error);
+    
+}).finally(() => "Todo ha terminado");
+// Generatos
+
+function* ejemploGenerator() {
+    // yield --> para emitir valores
+
+    let index = 0;
+    while (index < 5) {
+         // Emitimos un valor incrementado
+         yield index ++;
+    }
+}
+
+// Guardamos la funcion generadora en una variable
+
+let generadora = ejemploGenerator();
+
+// Accedemos a los valores emitidos
+console.log(generadora.next().value); // 0
+console.log(generadora.next().value); // 1
+console.log(generadora.next().value); // 2
+console.log(generadora.next().value); // 3
+console.log(generadora.next().value); // 4
+
+// worker
+function* watcher(valor: number){
+    yield valor; // emitimos el valor inicial
+    yield* worker(valor); // llamamos a las emisiones del wolker
+
+    yield valor + 10; // emitimos el valor final
+}
+
+function* worker(valor: number){
+    yield valor + 1;
+    yield valor + 2;
+    yield valor + 3;
+}
+
+let generatorSaga = watcher(0);
+
+console.log(generatorSaga.next().value); // 0 (lo ha echo el watcher)
+console.log(generatorSaga.next().value); // 1 (lo ha echo el wolker)
+console.log(generatorSaga.next().value); // 2 (lo ha echo el wolker)
+console.log(generatorSaga.next().value); // 3 (lo ha echo el wolker)
+console.log(generatorSaga.next().value); // 10 (lo ha echo el watcher)
+
