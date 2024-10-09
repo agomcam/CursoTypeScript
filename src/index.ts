@@ -1,7 +1,7 @@
 import { Console, log } from "console";
 import { type, version } from "os";
 import { Interface } from "readline";
-
+import Cookies from 'js-cookie'
 // Imprimir por consola
 console.log("Hola Antonio");
 
@@ -134,17 +134,17 @@ try {
 // Bucles
 
 let listaTareas: Tarea[] = [{
-    nombre: "Algo",
+    nombre: "Sacar al perro",
     estado: EstadoTarea.Pendiente,
     prioridad: 4
 },
 {
-    nombre: "Antonio",
+    nombre: "Fregar",
     estado: EstadoTarea.EnProceso,
     prioridad: 0
 },
 {
-    nombre: "Algo",
+    nombre: "Tirar la basura",
     estado: EstadoTarea.Pendiente,
     prioridad: 15
 }];
@@ -304,12 +304,12 @@ async function ejemploAsync(): Promise<string> {
 
 }
 
-ejemploAsync().then((respuesta) =>{
+ejemploAsync().then((respuesta) => {
     console.log("Respueta", respuesta);
-    
-}).catch((error) =>{
+
+}).catch((error) => {
     console.log("Ha avido un error", error);
-    
+
 }).finally(() => "Todo ha terminado");
 // Generatos
 
@@ -318,8 +318,8 @@ function* ejemploGenerator() {
 
     let index = 0;
     while (index < 5) {
-         // Emitimos un valor incrementado
-         yield index ++;
+        // Emitimos un valor incrementado
+        yield index++;
     }
 }
 
@@ -335,14 +335,14 @@ console.log(generadora.next().value); // 3
 console.log(generadora.next().value); // 4
 
 // worker
-function* watcher(valor: number){
+function* watcher(valor: number) {
     yield valor; // emitimos el valor inicial
     yield* worker(valor); // llamamos a las emisiones del wolker
 
     yield valor + 10; // emitimos el valor final
 }
 
-function* worker(valor: number){
+function* worker(valor: number) {
     yield valor + 1;
     yield valor + 2;
     yield valor + 3;
@@ -356,3 +356,173 @@ console.log(generatorSaga.next().value); // 2 (lo ha echo el wolker)
 console.log(generatorSaga.next().value); // 3 (lo ha echo el wolker)
 console.log(generatorSaga.next().value); // 10 (lo ha echo el watcher)
 
+async function asincronas() {
+    let suma = 0;
+    for (let index = 0; index < 100; index++) {
+        suma += index;
+
+    }
+    return suma;
+
+}
+
+asincronas().then((data: number) => {
+    console.log(`El resultado de ejecutar async = ${data}`);
+
+});
+console.log("Línea de codigo posterior a llamada asincrona");
+
+// Funcion asincronas y generadoras
+
+function* fgeneradora2(): Generator<String> {
+    yield "Hola";
+    yield "Mundo";
+    yield "IES";
+}
+
+let llamadafgen2 = fgeneradora2();
+let str = llamadafgen2.next()
+
+while (str.done == false) {
+    console.log(str.value);
+    str = llamadafgen2.next()
+}
+
+type WebPage = {
+    Name: String,
+    Domain: String,
+    Descripcion: String
+}
+
+async function* obtenerDatosWeb(): AsyncGenerator<WebPage> {
+    let peticion = await fetch("https://haveibeenpwned.com/api/v2/breaches");
+    let datos: WebPage[] = await peticion.json() as WebPage[];
+
+    for (let index = 0; index < datos.length; index++) {
+        yield datos[index];
+
+    }
+
+}
+
+let datosWebPage = obtenerDatosWeb();
+
+datosWebPage.next().then(({ value, done }) => {
+    console.log(`Nombre pagina: ${value.Name} Descripcion pagina: ${value.Description}`);
+})
+
+function saludarSobrecargado(nombre: String): String;
+function saludarSobrecargado(nombre: String, apellido: String): String;
+function saludarSobrecargado(nombre: String, apellido: String, edad: String): String;
+
+function saludarSobrecargado(nombre: String, apellido?: String, edad?: String) {
+    let saludo = `Hola ${nombre}`;
+
+    if (apellido) {
+        saludo += ` ${apellido}`;
+    }
+    if (edad) {
+        saludo += `${edad}`;
+    }
+
+    return saludo
+}
+
+console.log(saludarSobrecargado("Antonio", "Pepito de los grillos", "23"));
+
+console.log("-----------------tareas-----------------");
+
+
+/**
+ * Funcion que sirve para guardar datos en el navegador
+ * @param type - indicamos session si queremos guardar los datos en la sesion o local en caso de que queramos guardar estos de forma local
+ * @param key - nombre de los datos guardados
+ * @param data  - array de tarea que son los datos que vamos a guardar
+ */
+function saveData(type: String = "SessionStorage", key: string, data: Tarea[]) {
+
+    try {
+        if (type.toLowerCase() == "session" || type == "SessionStorage") {
+            sessionStorage.setItem(key, JSON.stringify(data))
+        } else if (type.toLowerCase() == "local") {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+    } catch (error) {
+        console.log("Error no esta definido el almacenamiento de los datos");
+
+    }
+
+}
+let tarea2: Tarea = { nombre: "Estudiar", prioridad: 1, estado: EstadoTarea.Terminado };
+let tareas: Tarea[] = [tarea1, tarea2];
+
+console.log("Guardamos los datos en las sesiones");
+
+saveData("session", "datos", tareas);
+saveData("local", "datos", tareas);
+
+// Crea una función en tu proyecto que permita la recuperar la información almacenada en SessionStorage y LocalStorage.
+// Dicha función debe recibir dos parámetros: type que será un string y tendrá como valor por defecto "session", 
+// y un string llamado "key". El funcionamiento de la función debe ser el siguiente: dependiendo el valor de type, si es "sessión" o "local", 
+// se recuperará la información empleando el objeto "SessionStorage" o "LocalStorage" y la key pasada como parámetro.
+function getData(type: String = "session", key: string) {
+
+    let datos;
+
+    try {
+        if (type.toLowerCase() == "session") {
+            datos = sessionStorage.getItem(key);
+            console.log(`Datos recuperados de sessionStorage: ${datos}`);
+        } else if (type.toLowerCase() == "local") {
+            datos = localStorage.getItem(key);
+            console.log(`Datos recuperados de localStorage: ${datos}`);
+        }
+
+
+    } catch (error) {
+        console.log("Error no esta definido el almacenamiento de los datos");
+
+    }
+
+}
+
+getData("session", "datos");
+getData("local", "datos");
+
+
+function removeData(type: String = "session", key: string) {
+
+    try {
+        if (type.toLowerCase() == "session") {
+            sessionStorage.removeItem(key);
+            console.log(`Datos eliminados de sessionStorage`);
+        } else if (type.toLowerCase() == "local") {
+            localStorage.removeItem(key);
+            console.log(`Datos eliminados de localStorage`);
+        }
+
+
+    } catch (error) {
+        console.log("Error no esta definido el almacenamiento de los datos");
+
+    }
+
+}
+
+removeData("session", "datos");
+removeData("local", "datos");
+
+Cookies.set('Nombre', 'Antonio', { expires: 7, path: "/", sameSite: 'Strict', secure: false })
+Cookies.set('Apellido', 'Gómez Camarena', { expires: 2, path: "/", sameSite: 'Strict', secure: false })
+Cookies.set('Email', 'agomcam813@iescarrillo.es', { expires: 4, path: "/", sameSite: 'Strict', secure: false })
+
+console.log(Cookies.get('Nombre'));
+console.log(Cookies.get('Apellido'));
+console.log(Cookies.get('Email'));
+
+Cookies.remove("Nombre")
+Cookies.remove("Apellido")
+Cookies.remove("Email")
+console.log("Datos eliminados correctamente");
+
+console.log("-----------------Fin-tareas-----------------");
