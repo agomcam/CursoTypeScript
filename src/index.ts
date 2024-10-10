@@ -526,3 +526,47 @@ Cookies.remove("Email")
 console.log("Datos eliminados correctamente");
 
 console.log("-----------------Fin-tareas-----------------");
+
+let input = document.getElementById("input-contenido") as HTMLInputElement;
+let btnNuevoContenido = document.getElementsByName("btn-add-content")[0] as HTMLButtonElement;
+let div = document.getElementsByTagName("div") as HTMLCollectionOf<HTMLDivElement>;
+
+console.log(input);
+console.log(btnNuevoContenido);
+console.log(div);
+
+let elemento01 = document.getElementById("lista-contenidos") as HTMLOListElement;
+let elementosLi = document.getElementById("lista-contenidos")?.getElementsByTagName("li");
+let elementosLi2 = document.querySelectorAll("ol[id = 'lista-contenidos'] > li");
+let parrafoError = document.getElementById("p-errores") as HTMLParagraphElement;
+
+console.log(elementosLi);
+console.log(elementosLi2);
+
+// creacion de elementos
+
+
+
+// añadimos elemento al pulsar el boton
+
+btnNuevoContenido.addEventListener("click", (Event) => {
+
+    if (input.value == "") {
+        console.log("El contenido no puede estar vacio")
+        parrafoError.setAttribute("Style", "color:red;")
+        parrafoError.innerText = "ERROR NO PUEDE ESTAR VACÍO EL INPUT"
+
+    } else {
+        parrafoError.innerText = "";
+        // Creamos el elemento li
+        let nuevoElemento: HTMLLIElement = document.createElement("li");
+        // Le indicamos el texto que tiene que tener este elemento
+        nuevoElemento.innerText = input.value;
+        // Añadimos el elmento
+        elemento01.append(nuevoElemento);
+        input.value = "";
+    }
+
+
+})
+console.log("-----------------Fin-Linea-----------------")
